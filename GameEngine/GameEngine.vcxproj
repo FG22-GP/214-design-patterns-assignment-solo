@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -27,10 +27,14 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="block.cpp" />
     <ClCompile Include="game.cpp" />
+    <ClCompile Include="tetris.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Window.h" />
+    <ClInclude Include="block.h" />
+    <ClInclude Include="structs.h" />
+    <ClInclude Include="tetris.h" />
   </ItemGroup>
   <ItemGroup>
     <CopyFileToFolders Include="..\ext\SDL2-2.26.4\lib\x64\SDL2.dll">
