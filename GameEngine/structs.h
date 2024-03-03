@@ -1,6 +1,6 @@
 #pragma once
 
-struct Coordinate
+struct Vec2Int
 {
     int X;
     int Y;

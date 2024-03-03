@@ -31,9 +31,9 @@ bool Block::IsAnyBlockOutOfBounds()
     return false;
 }
 
-Coordinate Block::GetBlockPosition(int index)
+Vec2Int Block::GetBlockPosition(int index)
 {
-    return Coordinate 
+    return Vec2Int 
     (
         Position.X + LocalCoordinate[CurrentRotation][index].X - 1,
         Position.Y + LocalCoordinate[CurrentRotation][index].Y - 1

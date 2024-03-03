@@ -11,8 +11,8 @@ protected:
 
 public:
     SDL_Color Color = {};
-    Coordinate Position = { 4, 0 };
-    Coordinate LocalCoordinate[NUM_ROTATIONS][NUM_BLOCKS] = {};
+    Vec2Int Position = { 4, 0 };
+    Vec2Int LocalCoordinate[NUM_ROTATIONS][NUM_BLOCKS] = {};
 
     // Empty constructor
     Block() {};
@@ -34,7 +34,7 @@ public:
 
     void Rotate(bool rotateClockwise);
     bool IsAnyBlockOutOfBounds();
-    Coordinate GetBlockPosition(int index);
+    Vec2Int GetBlockPosition(int index);
 };
 
 class IBlock : public Block
