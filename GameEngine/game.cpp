@@ -37,6 +37,7 @@ int main(int argc, char* args[])
 
 	SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "linear"); // Make the scaled rendering look smoother
 	SDL_RenderSetLogicalSize(renderer, 1024, 768);
+	SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
 
 	// Load font
 	auto font = TTF_OpenFont("C:\\Windows\\Fonts\\verdana.ttf", 24);

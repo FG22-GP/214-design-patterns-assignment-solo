@@ -10,6 +10,8 @@ class Tetris
 public:
     static const int COLOUMNS = 10;
     static const int ROWS = 20;
+    static const int NUM_BLOCKS = 4;
+    static const int BLOCK_SIZE = 32;
 
     void Initialize();
     void Restart();
@@ -33,27 +35,23 @@ public:
     void DrawText(const int x, const int y, const char* text);
 
 private:
-    const int NUM_BLOCKS = 4;
-    const int BLOCK_SIZE = 32;
+    TTF_Font* Font = {};
+    SDL_Renderer* Renderer = {};
+
+    SDL_Color Grid[COLOUMNS][ROWS] = {};
     const SDL_Color GridColor = { 128, 128, 128, 255 };
 
-    SDL_Renderer* Renderer = {};
-    TTF_Font* Font = {};
-
-    Block* CurrentActiveBlock = {};
-    SDL_Color Grid[COLOUMNS][ROWS] = {};
-
     bool IsGamePaused = false;
+    bool DrawGhostBlock = true;
+
     float TimeElapsedSinceLastDrop = 0.0f;
     float TimeInSecondsToDrop = 1.0f;
     int LinesCleared = 0;
     int LinesClearedHighScore = 0;
 
-    // Holds all block types (I, J, L, O, S, T, and Z)
-    std::vector<Block*> BlockTypes = {};
-
-    // Picks the first block from the list and adds more once there are less than 4 in the list
-    std::vector<Block*> RandomBlocks = {};
+    Block* CurrentActiveBlock = {};
+    std::vector<Block*> BlockTypes = {};    // Holds all block types (I, J, L, O, S, T, and Z)
+    std::vector<Block*> RandomBlocks = {};  // Picks the first block from the list and adds more once there are less than 4 in the list
 
     // Input requests
     bool MoveLeft = false;

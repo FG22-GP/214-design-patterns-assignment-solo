@@ -42,7 +42,7 @@ class IBlock : public Block
 public:
     IBlock()
     {
-        Color = { 0, 255, 255, 128 };
+        Color = { 0, 255, 255, 255 };
 
         // First dimension is the rotation index
         // Second dimension is the block index with its position
@@ -73,7 +73,7 @@ class JBlock : public Block
 public:
     JBlock()
     {
-        Color = { 0, 0, 255, 128 };
+        Color = { 0, 0, 255, 255 };
 
         LocalCoordinate[0][0] = { 1, 1 };
         LocalCoordinate[0][1] = { 1, 2 };
@@ -102,7 +102,7 @@ class LBlock : public Block
 public:
     LBlock()
     {
-        Color = { 255, 170, 0, 128 };
+        Color = { 255, 170, 0, 255 };
 
         LocalCoordinate[0][0] = { 3, 1 };
         LocalCoordinate[0][1] = { 1, 2 };
@@ -131,7 +131,7 @@ class OBlock : public Block
 public:
     OBlock()
     {
-        Color = { 255, 255, 0, 128 };
+        Color = { 255, 255, 0, 255 };
 
         for (int i = 0; i < NUM_BLOCKS; i++)
         {
@@ -148,7 +148,7 @@ class SBlock : public Block
 public:
     SBlock()
     {
-        Color = { 0, 255, 0, 128 };
+        Color = { 0, 255, 0, 255 };
 
         LocalCoordinate[0][0] = { 2, 1 };
         LocalCoordinate[0][1] = { 3, 1 };
@@ -177,7 +177,7 @@ class TBlock : public Block
 public:
     TBlock()
     {
-        Color = { 153, 0, 255, 128 };
+        Color = { 153, 0, 255, 255 };
 
         LocalCoordinate[0][0] = { 2, 1 };
         LocalCoordinate[0][1] = { 1, 2 };
@@ -206,7 +206,7 @@ class ZBlock : public Block
 public:
     ZBlock()
     {
-        Color = { 255, 0, 0, 128 };
+        Color = { 255, 0, 0, 255 };
 
         LocalCoordinate[0][0] = { 1, 1 };
         LocalCoordinate[0][1] = { 2, 1 };

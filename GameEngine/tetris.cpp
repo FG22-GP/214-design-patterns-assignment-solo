@@ -147,6 +147,35 @@ void Tetris::Render()
 		DrawBlock(position.X, position.Y, CurrentActiveBlock->Color);
 	}
 
+	// Draw a ghost block at the lowest row it can move down to
+	if (DrawGhostBlock)
+	{
+		int originalPosition = CurrentActiveBlock->Position.Y;
+		for (int row = 0; row < ROWS; row++)
+		{
+			if (!CanBlockMoveDown())
+			{
+				auto color = CurrentActiveBlock->Color;
+				color.a = 128;
+
+				for (int i = 0; i < NUM_BLOCKS; i++)
+				{
+					const auto position = CurrentActiveBlock->GetBlockPosition(i);
+					DrawBlock(position.X, position.Y, color);
+				}
+
+				break;
+			}
+			else
+			{
+				CurrentActiveBlock->Position.Y++;
+			}
+		}
+
+		// Reset position
+		CurrentActiveBlock->Position.Y = originalPosition;
+	}
+
 	// Draw all blocks in the grid
 	for (int col = 0; col < COLOUMNS; col++)
 	{
@@ -217,6 +246,9 @@ void Tetris::OnInput(const SDL_KeyboardEvent input)
 			break;
 		case SDLK_c:
 			RotateClockwise = true;
+			break;
+		case SDLK_g:
+			DrawGhostBlock = !DrawGhostBlock;
 			break;
 		case SDLK_LEFT:
 			MoveLeft = true;
