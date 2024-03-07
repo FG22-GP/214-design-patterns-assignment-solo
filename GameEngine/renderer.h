@@ -9,7 +9,8 @@ class Tetris;
 class Renderer
 {
 public:
-    // Returns 1 on failure and 0 on success
+    /// <summary>Initializes SDL and TTF</summary>
+    /// <returns>1 on failure, 0 on success</returns>
     int Initialize();
     void Render(Tetris* tetris);
 
@@ -26,7 +27,7 @@ private:
     SDL_Window* Window = {};
     SDL_Renderer* Renderer;
 
-    SDL_Color BackgroundColor = { 69, 0, 0, 255 };
+    SDL_Color BackgroundColor = { 0, 0, 0, 255 };
 
     TTF_Font* Font = {};
     std::string FontPath = "C:\\Windows\\Fonts\\verdana.ttf";
