@@ -15,6 +15,8 @@ public:
     static const int ROWS = 20;
     static const int NUM_BLOCKS = 4;
     static const int BLOCK_SIZE = 32;
+    static const int BOARD_WIDTH = COLOUMNS * BLOCK_SIZE;
+    static const int BOARD_HEIGHT = ROWS * BLOCK_SIZE;
 
     void Initialize();
     void Restart();
@@ -36,7 +38,6 @@ private:
     Renderer* Renderer = {};
 
     SDL_Color Grid[COLOUMNS][ROWS] = {};
-    const SDL_Color GridColor = { 128, 128, 128, 255 };
 
     bool IsGamePaused = false;
     bool DrawGhostBlock = true;

@@ -81,7 +81,7 @@ void Renderer::DrawBlock(const int x, const int y, const SDL_Color color)
 
 void Renderer::DrawText(const int x, const int y, const char* text)
 {
-	SDL_Surface* surface = TTF_RenderText_Shaded(Font, text, { 255, 255, 255 }, { 0, 0, 0 });
+	SDL_Surface* surface = TTF_RenderText_Shaded(Font, text, { 255, 255, 255 }, BackgroundColor);
 	SDL_Texture* texture = SDL_CreateTextureFromSurface(Renderer, surface);
 	SDL_Rect rect = { x, y, surface->w, surface->h };
 

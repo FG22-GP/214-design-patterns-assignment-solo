@@ -176,16 +176,19 @@ void Tetris::Tick(const float deltaTime)
 
 void Tetris::OnRender()
 {
+	// Draw the background black regardless of what the renderer's background color is
+	Renderer->DrawFilledRectangle(0, 0, BOARD_WIDTH, BOARD_HEIGHT, { 0, 0, 0, 255 });
+
 	// Draw the grid's vertical line
 	for (int col = 0; col <= COLOUMNS; col++)
 	{
-		Renderer->DrawLine(BLOCK_SIZE * col, 0, BLOCK_SIZE * col, BLOCK_SIZE * ROWS, GridColor);
+		Renderer->DrawLine(BLOCK_SIZE * col, 0, BLOCK_SIZE * col, BOARD_HEIGHT, { 128, 128, 128, 255 });
 	}
 
 	// Draw the grid's horizontal line
 	for (int row = 0; row <= ROWS; row++)
 	{
-		Renderer->DrawLine(0, BLOCK_SIZE * row, BLOCK_SIZE * COLOUMNS, BLOCK_SIZE * row, GridColor);
+		Renderer->DrawLine(0, BLOCK_SIZE * row, BOARD_WIDTH, BLOCK_SIZE * row, { 128, 128, 128, 255 });
 	}
 
 	// Draw the current block
@@ -249,7 +252,7 @@ void Tetris::OnRender()
 		}
 	}
 	
-	static int x = COLOUMNS * BLOCK_SIZE + (BLOCK_SIZE * 3);
+	static int x = BOARD_WIDTH + (BLOCK_SIZE * 3);
 	if (IsGamePaused)
 	{
 		Renderer->DrawText(x, BLOCK_SIZE * 1, "GAME PAUSED");
