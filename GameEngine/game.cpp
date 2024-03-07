@@ -10,6 +10,8 @@ int main(int argc, char* args[])
 	Renderer* renderer = new Renderer();
 	if (renderer->Initialize() == EXIT_FAILURE)
 	{
+		// Pause so it doesn't close before you can read what went wrong
+		system("pause");
 		return -1;
 	}
 
