@@ -29,10 +29,12 @@
   <ItemGroup>
     <ClCompile Include="block.cpp" />
     <ClCompile Include="game.cpp" />
+    <ClCompile Include="renderer.cpp" />
     <ClCompile Include="tetris.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="block.h" />
+    <ClInclude Include="renderer.h" />
     <ClInclude Include="structs.h" />
     <ClInclude Include="tetris.h" />
   </ItemGroup>

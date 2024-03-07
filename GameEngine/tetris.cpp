@@ -126,25 +126,25 @@ void Tetris::Tick(const float deltaTime)
 	}
 }
 
-void Tetris::Render()
+void Tetris::OnRender()
 {
 	// Draw the grid's vertical line
 	for (int col = 0; col <= COLOUMNS; col++)
 	{
-		DrawLine(BLOCK_SIZE * col, 0, BLOCK_SIZE * col, BLOCK_SIZE * ROWS, GridColor);
+		Renderer->DrawLine(BLOCK_SIZE * col, 0, BLOCK_SIZE * col, BLOCK_SIZE * ROWS, GridColor);
 	}
 
 	// Draw the grid's horizontal line
 	for (int row = 0; row <= ROWS; row++)
 	{
-		DrawLine(0, BLOCK_SIZE * row, BLOCK_SIZE * COLOUMNS, BLOCK_SIZE * row, GridColor);
+		Renderer->DrawLine(0, BLOCK_SIZE * row, BLOCK_SIZE * COLOUMNS, BLOCK_SIZE * row, GridColor);
 	}
 
 	// Draw the current block
 	for (int i = 0; i < NUM_BLOCKS; i++)
 	{
 		const auto position = CurrentActiveBlock->GetBlockPosition(i);
-		DrawBlock(position.X, position.Y, CurrentActiveBlock->Color);
+		Renderer->DrawBlock(position.X, position.Y, CurrentActiveBlock->Color);
 	}
 
 	// Draw a ghost block at the lowest row it can move down to
@@ -161,7 +161,7 @@ void Tetris::Render()
 				for (int i = 0; i < NUM_BLOCKS; i++)
 				{
 					const auto position = CurrentActiveBlock->GetBlockPosition(i);
-					DrawBlock(position.X, position.Y, color);
+					Renderer->DrawBlock(position.X, position.Y, color);
 				}
 
 				break;
@@ -183,7 +183,7 @@ void Tetris::Render()
 		{
 			if (Grid[col][row].a != 0)
 			{
-				DrawBlock(col, row, Grid[col][row]);
+				Renderer->DrawBlock(col, row, Grid[col][row]);
 			}
 		}
 	}
@@ -197,18 +197,18 @@ void Tetris::Render()
 
 			int x = COLOUMNS + position.X;
 			int y = COLOUMNS + (i * NUM_BLOCKS) + position.Y;
-			DrawBlock(x, y, RandomBlocks[i]->Color);
+			Renderer->DrawBlock(x, y, RandomBlocks[i]->Color);
 		}
 	}
 	
 	static int x = COLOUMNS * BLOCK_SIZE + (BLOCK_SIZE * 3);
 	if (IsGamePaused)
 	{
-		DrawText(x, BLOCK_SIZE * 1, "GAME PAUSED");
+		Renderer->DrawText(x, BLOCK_SIZE * 1, "GAME PAUSED");
 	}
 
-	DrawText(x, BLOCK_SIZE * 3, std::format("Lines Cleared: {}", LinesCleared).c_str());
-	DrawText(x, BLOCK_SIZE * 4, std::format("High Score: {}", LinesClearedHighScore).c_str());
+	Renderer->DrawText(x, BLOCK_SIZE * 3, std::format("Lines Cleared: {}", LinesCleared).c_str());
+	Renderer->DrawText(x, BLOCK_SIZE * 4, std::format("High Score: {}", LinesClearedHighScore).c_str());
 }
 
 void Tetris::OnInput(const SDL_KeyboardEvent input)
@@ -410,40 +410,4 @@ void Tetris::DestoryFullRows(int &rowsCleared)
 			DestoryFullRows(rowsCleared);
 		}
 	}
-}
-
-void Tetris::DrawLine(const int x1, const int y1, const int x2, const int y2, const SDL_Color color)
-{
-	SDL_SetRenderDrawColor(Renderer, color.r, color.g, color.b, color.a);
-	SDL_RenderDrawLine(Renderer, x1, y1, x2, y2);
-}
-
-void Tetris::DrawRectangle(const int x, const int y, const int width, const int height, const SDL_Color color)
-{
-	SDL_SetRenderDrawColor(Renderer, color.r, color.g, color.b, color.a);
-	SDL_Rect rect = { x, y, width, height };
-	SDL_RenderDrawRect(Renderer, &rect);
-}
-
-void Tetris::DrawFilledRectangle(const int x, const int y, const int width, const int height, const SDL_Color color)
-{
-	SDL_SetRenderDrawColor(Renderer, color.r, color.g, color.b, color.a);
-	SDL_Rect rect = { x, y, width, height };
-	SDL_RenderFillRect(Renderer, &rect);
-}
-
-void Tetris::DrawBlock(const int x, const int y, const SDL_Color color)
-{
-	DrawFilledRectangle(x * BLOCK_SIZE, y * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE, color);
-}
-
-void Tetris::DrawText(const int x, const int y, const char* text)
-{
-	SDL_Surface* surface = TTF_RenderText_Solid(Font, text, { 255, 255, 255 });
-	SDL_Texture* texture = SDL_CreateTextureFromSurface(Renderer, surface);
-	SDL_Rect rect = { x, y, surface->w, surface->h };
-
-	SDL_RenderCopy(Renderer, texture, NULL, &rect);
-	SDL_FreeSurface(surface);
-	SDL_DestroyTexture(texture);
 }

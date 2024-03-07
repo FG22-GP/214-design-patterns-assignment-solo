@@ -4,6 +4,9 @@
 #include <SDL_ttf.h>
 #include "block.h"
 #include "structs.h"
+#include "renderer.h"
+
+class Renderer;
 
 class Tetris
 {
@@ -16,11 +19,10 @@ public:
     void Initialize();
     void Restart();
     void Tick(const float deltaTime);
-    void Render();
+    void OnRender();
     void OnInput(const SDL_KeyboardEvent input);
 
-    void SetRenderer(SDL_Renderer* renderer) { Renderer = renderer; }
-    void SetFont(TTF_Font* font) { Font = font; }
+    void SetRenderer(Renderer* renderer) { Renderer = renderer; }
 
     Block* GetRandomBlock();
     bool CanBlockMoveDown();
@@ -28,15 +30,8 @@ public:
     bool CanBlockRotate(const bool clockwise);
     void DestoryFullRows(int &rowsCleared);
 
-    void DrawLine(const int x1, const int y1, const int x2, const int y2, const SDL_Color color);
-    void DrawRectangle(const int x, const int y, const int width, const int height, const SDL_Color color);
-    void DrawFilledRectangle(const int x, const int y, const int width, const int height, const SDL_Color color);
-    void DrawBlock(const int x, const int y, const SDL_Color color);
-    void DrawText(const int x, const int y, const char* text);
-
 private:
-    TTF_Font* Font = {};
-    SDL_Renderer* Renderer = {};
+    Renderer* Renderer = {};
 
     SDL_Color Grid[COLOUMNS][ROWS] = {};
     const SDL_Color GridColor = { 128, 128, 128, 255 };
