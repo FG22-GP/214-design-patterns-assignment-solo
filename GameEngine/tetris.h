@@ -28,7 +28,9 @@ public:
     bool CanBlockMoveDown();
     bool CanBlockMoveHorizontally(const bool moveLeft);
     bool CanBlockRotate(const bool clockwise);
+
     void DestoryFullRows(int &rowsCleared);
+    int GetScore(const int rowsCleared);
 
 private:
     Renderer* Renderer = {};
@@ -39,10 +41,18 @@ private:
     bool IsGamePaused = false;
     bool DrawGhostBlock = true;
 
+    float TimeElapsed = 0.0f;
     float TimeElapsedSinceLastDrop = 0.0f;
+    float InititalTimeInSecondsToDrop = 1.0f;
     float TimeInSecondsToDrop = 1.0f;
     int LinesCleared = 0;
-    int LinesClearedHighScore = 0;
+    int LinesClearedAtLevel = 0;
+    int Score = 0;
+    int HighScore = 0;
+    int Level = 0;
+    const int RowsClearedToAdvanceToNextLevel = 10;
+    float LastTimeRotated = 0.0f;
+    const float RotationDelay = 0.2f;
 
     Block* CurrentActiveBlock = {};
     std::vector<Block*> BlockTypes = {};    // Holds all block types (I, J, L, O, S, T, and Z)

@@ -25,9 +25,9 @@ void Tetris::Initialize()
 
 void Tetris::Restart()
 {
-	if (LinesCleared > LinesClearedHighScore)
+	if (HighScore > Score)
 	{
-		LinesClearedHighScore = LinesCleared;
+		HighScore = Score;
 	}
 
 	for (int col = 0; col < COLOUMNS; col++)
@@ -48,9 +48,14 @@ void Tetris::Restart()
 	RotateClockwise = false;
 	RotateCounterClockwise = false;
 
+	TimeElapsed = 0.0f;
 	TimeElapsedSinceLastDrop = 0.0f;
-	TimeInSecondsToDrop = 1.0f;
+	TimeInSecondsToDrop = InititalTimeInSecondsToDrop;
 	LinesCleared = 0;
+	LinesClearedAtLevel = 0;
+	Score = 0;
+	Level = 0;
+	LastTimeRotated = 0.0f;
 }
 
 void Tetris::Tick(const float deltaTime)
@@ -60,6 +65,7 @@ void Tetris::Tick(const float deltaTime)
 		return;
 	}
 
+	TimeElapsed += deltaTime;
 	TimeElapsedSinceLastDrop += deltaTime;
 
 	if (TimeElapsedSinceLastDrop > TimeInSecondsToDrop || MoveDownHard || MoveDown)
@@ -74,6 +80,8 @@ void Tetris::Tick(const float deltaTime)
 		}
 		else
 		{
+			MoveDownHard = false;
+
 			// If we can't move it down, we either hit the bottom or another block
 			for (int i = 0; i < NUM_BLOCKS; i++)
 			{
@@ -86,17 +94,56 @@ void Tetris::Tick(const float deltaTime)
 			DestoryFullRows(rowsCleared);
 
 			LinesCleared += rowsCleared;
-			MoveDownHard = false;
+			LinesClearedAtLevel += rowsCleared;
+			Score += GetScore(rowsCleared);
+
 			CurrentActiveBlock = GetRandomBlock();
 
-			// Checks if we have spawned on top of another block and restarts the game instantly if true
-			for (int i = 0; i < NUM_BLOCKS; i++)
+			if (LinesClearedAtLevel >= RowsClearedToAdvanceToNextLevel)
 			{
-				const auto position = CurrentActiveBlock->GetBlockPosition(i);
-				if (Grid[position.X][position.Y].a != 0)
+				// Clear grid
+				for (int col = 0; col < COLOUMNS; col++)
 				{
-					Restart();
-					return;
+					for (int row = 0; row < ROWS; row++)
+					{
+						Grid[col][row] = {};
+					}
+				}
+
+				Level++;
+				LinesClearedAtLevel = LinesClearedAtLevel - RowsClearedToAdvanceToNextLevel;
+
+				// TODO: Notify that we are on a new level (Observer pattern)
+
+				// 1.0f to 0.7f
+				if (Level < 10)
+				{
+					TimeInSecondsToDrop -= 0.03f;
+				}
+				else if (Level == 13 || Level == 16 || Level == 19)
+				{
+					// 13 -> 0.6f
+					// 16 -> 0.5f
+					// 19 -> 0.4f
+					TimeInSecondsToDrop -= 0.1f;
+				}
+				else if (Level == 29)
+				{
+					// 29 -> 0.2f (I'll be surpriced if you reach this far)
+					TimeInSecondsToDrop -= 0.2f;
+				}
+			}
+			else
+			{
+				// Checks if we have spawned on top of another block and restarts the game instantly if true
+				for (int i = 0; i < NUM_BLOCKS; i++)
+				{
+					const auto position = CurrentActiveBlock->GetBlockPosition(i);
+					if (Grid[position.X][position.Y].a != 0)
+					{
+						Restart();
+						return;
+					}
 				}
 			}
 		}
@@ -113,12 +160,13 @@ void Tetris::Tick(const float deltaTime)
 		MoveLeft = false;
 		MoveRight = false;
 	}
-	else if (RotateCounterClockwise || RotateClockwise)
+	else if ((RotateCounterClockwise || RotateClockwise) && TimeElapsed - LastTimeRotated > RotationDelay)
 	{
 		// Same as checking horizontally move. If we can't rotate it will be ignored
 		if (CanBlockRotate(RotateClockwise))
 		{
 			CurrentActiveBlock->Rotate(RotateClockwise);
+			LastTimeRotated = TimeElapsed;
 		}
 
 		RotateClockwise = false;
@@ -207,8 +255,10 @@ void Tetris::OnRender()
 		Renderer->DrawText(x, BLOCK_SIZE * 1, "GAME PAUSED");
 	}
 
-	Renderer->DrawText(x, BLOCK_SIZE * 3, std::format("Lines Cleared: {}", LinesCleared).c_str());
-	Renderer->DrawText(x, BLOCK_SIZE * 4, std::format("High Score: {}", LinesClearedHighScore).c_str());
+	Renderer->DrawText(x, BLOCK_SIZE * 3, std::format("Lines: {}", LinesCleared).c_str());
+	Renderer->DrawText(x, BLOCK_SIZE * 4, std::format("Level: {}", Level).c_str());
+	Renderer->DrawText(x, BLOCK_SIZE * 5, std::format("Score: {}", Score).c_str());
+	Renderer->DrawText(x, BLOCK_SIZE * 6, std::format("High Score: {}", HighScore).c_str());
 }
 
 void Tetris::OnInput(const SDL_KeyboardEvent input)
@@ -218,12 +268,7 @@ void Tetris::OnInput(const SDL_KeyboardEvent input)
 		return;
 	}
 
-	if (input.repeat > 0)
-	{
-		return;
-	}
-
-	if (IsGamePaused)
+	if (IsGamePaused && input.repeat == 0)
 	{
 		if (input.keysym.sym == SDLK_p || input.keysym.sym == SDLK_ESCAPE)
 		{
@@ -237,9 +282,6 @@ void Tetris::OnInput(const SDL_KeyboardEvent input)
 		case SDLK_p:
 		case SDLK_ESCAPE:
 			IsGamePaused = true;
-			break;
-		case SDLK_r:
-			Restart();
 			break;
 		case SDLK_x:
 			RotateCounterClockwise = true;
@@ -410,4 +452,30 @@ void Tetris::DestoryFullRows(int &rowsCleared)
 			DestoryFullRows(rowsCleared);
 		}
 	}
+}
+
+int Tetris::GetScore(const int rowsCleared)
+{
+	// https://en.wikipedia.org/wiki/Tetris_(NES_video_game)#Scoring
+	int clearBonus = 0;
+
+	switch (rowsCleared)
+	{
+		case 1:
+			clearBonus = 40;
+			break;
+		case 2:
+			clearBonus = 100;
+			break;
+		case 3:
+			clearBonus = 300;
+			break;
+		case 4:
+			clearBonus = 1200;
+			break;
+		default:
+			break;
+	}
+
+	return clearBonus * (Level + 1);
 }
