@@ -5,6 +5,7 @@
 #include "block.h"
 #include "structs.h"
 #include "renderer.h"
+#include "observer.h"
 
 class Renderer;
 
@@ -34,6 +35,9 @@ public:
     void DestoryFullRows(int &rowsCleared);
     int GetScore(const int rowsCleared);
 
+    void RegisterObserver(Observer* observer);
+    void NotifyObservers();
+
 private:
     Renderer* Renderer = {};
 
@@ -50,7 +54,7 @@ private:
     int LinesClearedAtLevel = 0;
     int Score = 0;
     int HighScore = 0;
-    int Level = 0;
+    uint8_t Level = 0;
     const int RowsClearedToAdvanceToNextLevel = 10;
     float LastTimeRotated = 0.0f;
     const float RotationDelay = 0.2f;
@@ -66,4 +70,6 @@ private:
     bool MoveDownHard = false;
     bool RotateClockwise = false;
     bool RotateCounterClockwise = false;
+
+    std::vector<Observer*> Observers;
 };

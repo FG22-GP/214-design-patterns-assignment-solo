@@ -3,10 +3,11 @@
 #include <SDL_ttf.h>
 #include <string>
 #include "tetris.h"
+#include "observer.h"
 
 class Tetris;
 
-class Renderer
+class Renderer : public Observer
 {
 public:
     /// <summary>Initializes SDL and TTF</summary>
@@ -28,9 +29,13 @@ private:
     SDL_Renderer* Renderer;
 
     SDL_Color BackgroundColor = { 0, 0, 0, 255 };
+    std::vector<SDL_Color> BackgroundColors;
 
     TTF_Font* Font = {};
     std::string FontPath = "C:\\Windows\\Fonts\\verdana.ttf";
-    int FontSize = 24;
+    uint8_t FontSize = 24;
+
+    void OnNotify(uint8_t level);
+    void SetupBackgroundColors();
 };
 

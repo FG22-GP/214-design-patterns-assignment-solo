@@ -38,6 +38,8 @@ int Renderer::Initialize()
 		return EXIT_FAILURE;
 	}
 
+	SetupBackgroundColors();
+
 	SDL_SetWindowTitle(Window, "Tetris");
 	return EXIT_SUCCESS;
 }
@@ -88,4 +90,20 @@ void Renderer::DrawText(const int x, const int y, const char* text)
 	SDL_RenderCopy(Renderer, texture, NULL, &rect);
 	SDL_FreeSurface(surface);
 	SDL_DestroyTexture(texture);
+}
+
+void Renderer::OnNotify(uint8_t level)
+{
+	BackgroundColor = BackgroundColors[level % BackgroundColors.size()];
+}
+
+void Renderer::SetupBackgroundColors()
+{
+	BackgroundColors.push_back({ 0, 0, 0, 255 });
+	BackgroundColors.push_back({ 64, 32, 32, 255 });
+	BackgroundColors.push_back({ 64, 64, 32, 255 });
+	BackgroundColors.push_back({ 64, 64, 64, 255 });
+	BackgroundColors.push_back({ 92, 64, 64, 255 });
+	BackgroundColors.push_back({ 64, 128, 64, 255 });
+	BackgroundColors.push_back({ 92, 64, 128, 255 });
 }

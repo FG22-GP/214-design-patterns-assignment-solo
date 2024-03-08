@@ -56,6 +56,8 @@ void Tetris::Restart()
 	Score = 0;
 	Level = 0;
 	LastTimeRotated = 0.0f;
+
+	NotifyObservers();
 }
 
 void Tetris::Tick(const float deltaTime)
@@ -74,13 +76,27 @@ void Tetris::Tick(const float deltaTime)
 		MoveDown = false;
 
 		// If we can move block down, move it down
-		if (CanBlockMoveDown())
+		if (CanBlockMoveDown() && !MoveDownHard)
 		{
 			CurrentActiveBlock->Position.Y++;
 		}
 		else
 		{
-			MoveDownHard = false;
+			if (MoveDownHard == true)
+			{
+				MoveDownHard = false;
+				for (int row = 0; row < ROWS; row++)
+				{
+					if (!CanBlockMoveDown())
+					{
+						break;
+					}
+					else
+					{
+						CurrentActiveBlock->Position.Y++;
+					}
+				}
+			}
 
 			// If we can't move it down, we either hit the bottom or another block
 			for (int i = 0; i < NUM_BLOCKS; i++)
@@ -113,23 +129,19 @@ void Tetris::Tick(const float deltaTime)
 				Level++;
 				LinesClearedAtLevel = LinesClearedAtLevel - RowsClearedToAdvanceToNextLevel;
 
-				// TODO: Notify that we are on a new level (Observer pattern)
+				NotifyObservers();
 
-				// 1.0f to 0.7f
+				// Levels are from https://en.wikipedia.org/wiki/Tetris_(NES_video_game)#Gameplay
 				if (Level < 10)
 				{
 					TimeInSecondsToDrop -= 0.03f;
 				}
 				else if (Level == 13 || Level == 16 || Level == 19)
 				{
-					// 13 -> 0.6f
-					// 16 -> 0.5f
-					// 19 -> 0.4f
 					TimeInSecondsToDrop -= 0.1f;
 				}
 				else if (Level == 29)
 				{
-					// 29 -> 0.2f (I'll be surpriced if you reach this far)
 					TimeInSecondsToDrop -= 0.2f;
 				}
 			}
@@ -305,7 +317,10 @@ void Tetris::OnInput(const SDL_KeyboardEvent input)
 			MoveRight = true;
 			break;
 		case SDLK_SPACE:
-			MoveDownHard = true;
+			if (input.repeat == 0)
+			{
+				MoveDownHard = true;
+			}
 			break;
 		default:
 			break;
@@ -481,4 +496,17 @@ int Tetris::GetScore(const int rowsCleared)
 	}
 
 	return clearBonus * (Level + 1);
+}
+
+void Tetris::RegisterObserver(Observer* observer)
+{
+	Observers.push_back(observer);
+}
+
+void Tetris::NotifyObservers()
+{
+	for (Observer* observer : Observers)
+	{
+		observer->OnNotify(Level);
+	}
 }

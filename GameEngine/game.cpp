@@ -18,6 +18,7 @@ int main(int argc, char* args[])
 	Tetris* tetris = new Tetris();
 	tetris->Initialize();
 	tetris->SetRenderer(renderer);
+	tetris->RegisterObserver(renderer);
 
 	SDL_Event e; bool quit = false;
 	Uint64 currentTick = SDL_GetTicks64();
