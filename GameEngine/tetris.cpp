@@ -25,7 +25,7 @@ void Tetris::Initialize()
 
 void Tetris::Restart()
 {
-	if (HighScore > Score)
+	if (Score > HighScore)
 	{
 		HighScore = Score;
 	}
